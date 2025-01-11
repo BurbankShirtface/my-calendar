@@ -127,7 +127,6 @@ main {
 .calendar-grid {
   max-width: 1200px;
   width: 100%;
-  position: relative;
 }
 
 .day {
