@@ -1,3 +1,10 @@
+const express = require("express");
+const mongoose = require("mongoose");
+const cors = require("cors");
+require("dotenv").config();
+
+const app = express();
+
 app.use(
   cors({
     origin: ["http://localhost:5173", "https://your-frontend-url.onrender.com"],
@@ -6,15 +13,18 @@ app.use(
   })
 );
 
-app.get("/test", async (req, res) => {
-  try {
-    const Project = require("./models/Project");
-    const projects = await Project.find();
-    res.json({
-      count: projects.length,
-      projects: projects,
-    });
-  } catch (error) {
-    res.json({ error: error.message });
-  }
+app.use(express.json());
+
+// Connect to MongoDB
+mongoose
+  .connect(process.env.MONGODB_URI)
+  .then(() => console.log("Connected to MongoDB"))
+  .catch((err) => console.error("MongoDB connection error:", err));
+
+// Routes
+app.use("/api/projects", require("./routes/projects"));
+
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });
