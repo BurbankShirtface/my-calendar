@@ -3,14 +3,9 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 require("dotenv").config();
 
-// Import middleware
-const limiter = require("./middleware/rateLimiter");
-const errorHandler = require("./middleware/errorHandler");
-const requestLogger = require("./middleware/requestLogger");
-
 const app = express();
 
-// Security headers middleware
+// Basic security headers
 app.use((req, res, next) => {
   res.setHeader("X-Content-Type-Options", "nosniff");
   res.setHeader("X-Frame-Options", "DENY");
@@ -31,13 +26,13 @@ app.use(
   })
 );
 
-// Apply rate limiter
-app.use("/api/", limiter);
-
-// Request logging
-app.use(requestLogger);
-
 app.use(express.json());
+
+// Simple request logging
+app.use((req, res, next) => {
+  console.log(`${new Date().toISOString()} ${req.method} ${req.url}`);
+  next();
+});
 
 // Connect to MongoDB
 mongoose
@@ -47,9 +42,6 @@ mongoose
 
 // Routes
 app.use("/api/projects", require("./routes/projects"));
-
-// Error handling should be last
-app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
