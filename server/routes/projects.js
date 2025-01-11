@@ -11,11 +11,6 @@ router.get("/", async (req, res) => {
     const projects = await Project.find();
     console.log("Projects found in database:", projects);
 
-    // Add explicit headers
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
-    res.header("Access-Control-Allow-Headers", "Content-Type");
-
     console.log("Sending response:", projects);
     res.json(projects);
   } catch (error) {

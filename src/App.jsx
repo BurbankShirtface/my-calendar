@@ -3,7 +3,6 @@ import "./App.css";
 import Calendar from "./components/Calendar";
 import Header from "./components/Header";
 import ProjectList from "./components/ProjectList";
-import { ADMIN_PASSWORD } from "./config";
 
 const API_URL = import.meta.env.VITE_API_URL.replace(/\/$/, ""); // Remove trailing slash if present
 
@@ -20,11 +19,11 @@ function App() {
   };
 
   const handleLogin = (password) => {
-    if (password === ADMIN_PASSWORD) {
+    if (password === "admin123") {
       setIsAuthenticated(true);
       setShowAdminModal(false);
     } else {
-      alert("Incorrect password");
+      alert("Invalid password");
     }
   };
 
@@ -75,7 +74,7 @@ function App() {
   const handleUpdateProject = async (projectData) => {
     try {
       const response = await fetch(
-        `http://localhost:5000/api/projects/${projectData._id}`,
+        `${API_URL}/api/projects/${projectData._id}`,
         {
           method: "PUT",
           headers: {
@@ -103,12 +102,9 @@ function App() {
 
   const handleDeleteProject = async (projectId) => {
     try {
-      const response = await fetch(
-        `http://localhost:5000/api/projects/${projectId}`,
-        {
-          method: "DELETE",
-        }
-      );
+      const response = await fetch(`${API_URL}/api/projects/${projectId}`, {
+        method: "DELETE",
+      });
 
       if (!response.ok) {
         throw new Error("Failed to delete project");
