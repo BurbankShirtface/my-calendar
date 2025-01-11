@@ -2,11 +2,7 @@ import { useState, useEffect } from "react";
 import "./Calendar.css";
 
 function Calendar({ projects }) {
-  console.log("Calendar rendering with projects:", projects);
   const [months, setMonths] = useState([]);
-
-  // Add console log to see incoming projects
-  console.log("Calendar received projects:", projects);
 
   const getNext12Months = () => {
     const months = [];

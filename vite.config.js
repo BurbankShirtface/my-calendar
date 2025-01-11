@@ -7,9 +7,4 @@ export default defineConfig({
   build: {
     outDir: "dist",
   },
-  resolve: {
-    alias: {
-      "./config": "./src/config.js",
-    },
-  },
 });
