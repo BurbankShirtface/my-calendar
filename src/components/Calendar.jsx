@@ -5,9 +5,6 @@ function Calendar({ projects }) {
   const [months, setMonths] = useState([]);
   const [selectedDay, setSelectedDay] = useState(null);
 
-  // Add console log to see incoming projects
-  console.log("Calendar received projects:", projects);
-
   const getNext12Months = () => {
     const months = [];
     const now = new Date();
@@ -20,35 +17,26 @@ function Calendar({ projects }) {
     return months;
   };
 
-  // Update months at midnight and when component mounts
-  useEffect(() => {
-    const updateMonths = () => {
-      setMonths(getNext12Months());
-    };
+  const getDaysInMonth = (date) => {
+    const year = date.getFullYear();
+    const month = date.getMonth();
+    const firstDay = new Date(year, month, 1);
+    const lastDay = new Date(year, month + 1, 0);
+    const daysInMonth = [];
 
-    // Initial update
-    updateMonths();
+    for (let i = 0; i < firstDay.getDay(); i++) {
+      daysInMonth.push(null);
+    }
 
-    // Calculate time until next midnight
-    const now = new Date();
-    const tomorrow = new Date(now);
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    tomorrow.setHours(0, 0, 0, 0);
-    const timeUntilMidnight = tomorrow - now;
+    for (let day = 1; day <= lastDay.getDate(); day++) {
+      daysInMonth.push(new Date(year, month, day));
+    }
 
-    // Set up the daily update
-    const timeout = setTimeout(() => {
-      updateMonths();
-      // After first update, update every 24 hours
-      const interval = setInterval(updateMonths, 24 * 60 * 60 * 1000);
-      return () => clearInterval(interval);
-    }, timeUntilMidnight);
-
-    return () => clearTimeout(timeout);
-  }, []);
+    return daysInMonth;
+  };
 
   const handleDayClick = (date) => {
-    // If clicking the same day, close the popup
+    if (!date) return;
     if (selectedDay && selectedDay.getTime() === date.getTime()) {
       setSelectedDay(null);
     } else {
@@ -57,12 +45,36 @@ function Calendar({ projects }) {
   };
 
   const getProjectsForDay = (date) => {
+    if (!date) return [];
     return projects.filter((project) => {
       const startDate = new Date(project.startDate);
       const endDate = new Date(project.endDate);
       return date >= startDate && date <= endDate;
     });
   };
+
+  // Update months at midnight
+  useEffect(() => {
+    const updateMonths = () => {
+      setMonths(getNext12Months());
+    };
+
+    updateMonths();
+
+    const now = new Date();
+    const tomorrow = new Date(now);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    tomorrow.setHours(0, 0, 0, 0);
+    const timeUntilMidnight = tomorrow - now;
+
+    const timeout = setTimeout(() => {
+      updateMonths();
+      const interval = setInterval(updateMonths, 24 * 60 * 60 * 1000);
+      return () => clearInterval(interval);
+    }, timeUntilMidnight);
+
+    return () => clearTimeout(timeout);
+  }, []);
 
   return (
     <div className="calendar-grid">
@@ -75,7 +87,13 @@ function Calendar({ projects }) {
             })}
           </h2>
           <div className="days">
-            {/* ... your existing days of week header ... */}
+            <div className="day-header">Sun</div>
+            <div className="day-header">Mon</div>
+            <div className="day-header">Tue</div>
+            <div className="day-header">Wed</div>
+            <div className="day-header">Thu</div>
+            <div className="day-header">Fri</div>
+            <div className="day-header">Sat</div>
             {getDaysInMonth(month).map((day, dayIndex) => {
               const dayProjects = getProjectsForDay(day);
               const hasProjects = dayProjects.length > 0;
@@ -83,32 +101,38 @@ function Calendar({ projects }) {
               return (
                 <div
                   key={dayIndex}
-                  className={`day ${hasProjects ? "has-projects" : ""}`}
+                  className={`day ${!day ? "empty" : ""} ${
+                    hasProjects ? "has-projects" : ""
+                  }`}
                   onClick={() => handleDayClick(day)}
                 >
-                  <span className="day-number">{day.getDate()}</span>
-                  {dayProjects.map((project, index) => (
-                    <div
-                      key={index}
-                      className="project-indicator"
-                      style={{ backgroundColor: project.color }}
-                    />
-                  ))}
-                  {selectedDay &&
-                    selectedDay.getTime() === day.getTime() &&
-                    hasProjects && (
-                      <div className="project-popup">
-                        {dayProjects.map((project, index) => (
-                          <div key={index} className="project-popup-item">
-                            <span
-                              className="project-color-dot"
-                              style={{ backgroundColor: project.color }}
-                            />
-                            {project.name}
+                  {day && (
+                    <>
+                      <span className="day-number">{day.getDate()}</span>
+                      {dayProjects.map((project, index) => (
+                        <div
+                          key={index}
+                          className="project-indicator"
+                          style={{ backgroundColor: project.color }}
+                        />
+                      ))}
+                      {selectedDay &&
+                        selectedDay.getTime() === day.getTime() &&
+                        hasProjects && (
+                          <div className="project-popup">
+                            {dayProjects.map((project, index) => (
+                              <div key={index} className="project-popup-item">
+                                <span
+                                  className="project-color-dot"
+                                  style={{ backgroundColor: project.color }}
+                                />
+                                {project.name}
+                              </div>
+                            ))}
                           </div>
-                        ))}
-                      </div>
-                    )}
+                        )}
+                    </>
+                  )}
                 </div>
               );
             })}
