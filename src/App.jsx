@@ -4,7 +4,7 @@ import Calendar from "./components/Calendar";
 import Header from "./components/Header";
 import ProjectList from "./components/ProjectList";
 
-const API_URL = import.meta.env.VITE_API_URL;
+const API_URL = import.meta.env.VITE_API_URL.replace(/\/$/, ""); // Remove trailing slash if present
 
 function App() {
   const [projects, setProjects] = useState([]);
@@ -45,7 +45,7 @@ function App() {
 
   const handleAddProject = async (projectData) => {
     try {
-      const response = await fetch(`${API_URL}/api/projects`, {
+      const response = await fetch("http://localhost:5000/api/projects", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -74,7 +74,7 @@ function App() {
   const handleUpdateProject = async (projectData) => {
     try {
       const response = await fetch(
-        `${API_URL}/api/projects/${projectData._id}`,
+        `http://localhost:5000/api/projects/${projectData._id}`,
         {
           method: "PUT",
           headers: {
@@ -102,9 +102,12 @@ function App() {
 
   const handleDeleteProject = async (projectId) => {
     try {
-      const response = await fetch(`${API_URL}/api/projects/${projectId}`, {
-        method: "DELETE",
-      });
+      const response = await fetch(
+        `http://localhost:5000/api/projects/${projectId}`,
+        {
+          method: "DELETE",
+        }
+      );
 
       if (!response.ok) {
         throw new Error("Failed to delete project");
@@ -120,12 +123,11 @@ function App() {
   const fetchProjects = async () => {
     try {
       const response = await fetch(`${API_URL}/api/projects`);
-
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-
       const data = await response.json();
+      console.log("Fetched projects:", data); // Add this to debug
       setProjects(data);
     } catch (error) {
       console.error("Error fetching projects:", error);
