@@ -8,9 +8,14 @@ const app = express();
 
 app.use(
   cors({
-    origin: ["http://localhost:5173", "https://your-frontend-url.onrender.com"],
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    allowedHeaders: ["Content-Type"],
+    origin: [
+      "http://localhost:5173",
+      "https://montgomery-construction-calendar-front.onrender.com",
+      "https://montgomery-construction-calendar.onrender.com",
+    ],
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 
