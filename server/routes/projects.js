@@ -5,37 +5,45 @@ const Project = require("../models/Project");
 // Get all projects
 router.get("/", async (req, res) => {
   try {
-    console.log("GET /api/projects request received");
-    console.log("Request headers:", req.headers);
-
     const projects = await Project.find();
-    console.log("Projects found in database:", projects);
 
-    console.log("Sending response:", projects);
+    if (!projects) {
+      return res.status(404).json({
+        message: "No projects found",
+        error: null,
+      });
+    }
+
     res.json(projects);
   } catch (error) {
     console.error("Error in GET /api/projects:", error);
-    res.status(500).json({ message: error.message });
+    // Send a more detailed error response
+    res.status(500).json({
+      message: "Failed to fetch projects",
+      error: error.message,
+      stack: process.env.NODE_ENV === "development" ? error.stack : undefined,
+    });
   }
 });
 
 // Add a new project
 router.post("/", async (req, res) => {
-  const project = new Project({
-    startDate: req.body.startDate,
-    endDate: req.body.endDate,
-    name: req.body.name,
-    color: req.body.color,
-  });
-
   try {
-    console.log("POST /api/projects request received:", req.body);
+    const project = new Project({
+      startDate: req.body.startDate,
+      endDate: req.body.endDate,
+      name: req.body.name,
+      color: req.body.color,
+    });
+
     const newProject = await project.save();
-    console.log("New project saved:", newProject);
     res.status(201).json(newProject);
   } catch (error) {
     console.error("Error in POST /api/projects:", error);
-    res.status(400).json({ message: error.message });
+    res.status(400).json({
+      message: "Failed to create project",
+      error: error.message,
+    });
   }
 });
 
