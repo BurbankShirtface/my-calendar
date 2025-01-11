@@ -19,11 +19,11 @@ function App() {
   };
 
   const handleLogin = (password) => {
-    if (password === "admin123") {
+    if (password === import.meta.env.VITE_ADMIN_PASSWORD) {
       setIsAuthenticated(true);
       setShowAdminModal(false);
     } else {
-      alert("Invalid password");
+      alert("Incorrect password");
     }
   };
 
@@ -74,7 +74,7 @@ function App() {
   const handleUpdateProject = async (projectData) => {
     try {
       const response = await fetch(
-        `${API_URL}/api/projects/${projectData._id}`,
+        `http://localhost:5000/api/projects/${projectData._id}`,
         {
           method: "PUT",
           headers: {
@@ -102,9 +102,12 @@ function App() {
 
   const handleDeleteProject = async (projectId) => {
     try {
-      const response = await fetch(`${API_URL}/api/projects/${projectId}`, {
-        method: "DELETE",
-      });
+      const response = await fetch(
+        `http://localhost:5000/api/projects/${projectId}`,
+        {
+          method: "DELETE",
+        }
+      );
 
       if (!response.ok) {
         throw new Error("Failed to delete project");
