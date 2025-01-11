@@ -45,7 +45,7 @@ function App() {
 
   const handleAddProject = async (projectData) => {
     try {
-      const response = await fetch("http://localhost:5000/api/projects", {
+      const response = await fetch(`${API_URL}/api/projects`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -74,7 +74,7 @@ function App() {
   const handleUpdateProject = async (projectData) => {
     try {
       const response = await fetch(
-        `http://localhost:5000/api/projects/${projectData._id}`,
+        `${API_URL}/api/projects/${projectData._id}`,
         {
           method: "PUT",
           headers: {
@@ -102,12 +102,9 @@ function App() {
 
   const handleDeleteProject = async (projectId) => {
     try {
-      const response = await fetch(
-        `http://localhost:5000/api/projects/${projectId}`,
-        {
-          method: "DELETE",
-        }
-      );
+      const response = await fetch(`${API_URL}/api/projects/${projectId}`, {
+        method: "DELETE",
+      });
 
       if (!response.ok) {
         throw new Error("Failed to delete project");
