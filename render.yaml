@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: montgomery-calendar-backend
+    env: node
+    buildCommand: cd server && npm install
+    startCommand: cd server && node server.js
+    envVars:
+      - key: MONGODB_URI
+        sync: false
+      - key: PORT
+        value: 5000
