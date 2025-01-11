@@ -2,9 +2,21 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 require("dotenv").config();
-const dns = require("dns");
+
+// Import middleware
+const limiter = require("./middleware/rateLimiter");
+const errorHandler = require("./middleware/errorHandler");
+const requestLogger = require("./middleware/requestLogger");
 
 const app = express();
+
+// Security headers middleware
+app.use((req, res, next) => {
+  res.setHeader("X-Content-Type-Options", "nosniff");
+  res.setHeader("X-Frame-Options", "DENY");
+  res.setHeader("X-XSS-Protection", "1; mode=block");
+  next();
+});
 
 app.use(
   cors({
@@ -19,6 +31,12 @@ app.use(
   })
 );
 
+// Apply rate limiter
+app.use("/api/", limiter);
+
+// Request logging
+app.use(requestLogger);
+
 app.use(express.json());
 
 // Connect to MongoDB
@@ -30,15 +48,10 @@ mongoose
 // Routes
 app.use("/api/projects", require("./routes/projects"));
 
+// Error handling should be last
+app.use(errorHandler);
+
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
-});
-
-dns.lookup("montgomery-construction-calendar.onrender.com", (err, address) => {
-  if (err) {
-    console.log("DNS lookup error:", err);
-    return;
-  }
-  console.log("Render IP address:", address);
 });
