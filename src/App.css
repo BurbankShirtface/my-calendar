@@ -122,16 +122,8 @@ main {
   justify-content: center;
   width: 100%;
   padding: 1rem;
-}
-
-.calendar-grid {
-  max-width: 1200px;
-  width: 100%;
-}
-
-.day {
-  position: relative;
-  cursor: pointer;
+  box-sizing: border-box;
+  overflow-x: hidden;
 }
 
 .project-popup {

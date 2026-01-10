@@ -39,14 +39,55 @@ app.use(requestLogger);
 
 app.use(express.json());
 
-// Connect to MongoDB
-mongoose
-  .connect(process.env.MONGODB_URI)
-  .then(() => console.log("Connected to MongoDB"))
-  .catch((err) => console.error("MongoDB connection error:", err));
+// Connect to MongoDB with better error handling
+const connectDB = async () => {
+  try {
+    if (!process.env.MONGODB_URI) {
+      throw new Error("MONGODB_URI environment variable is not set!");
+    }
 
-// Routes
-app.use("/api/projects", require("./routes/projects"));
+    const conn = await mongoose.connect(process.env.MONGODB_URI, {
+      serverSelectionTimeoutMS: 5000, // Timeout after 5s instead of 30s
+      socketTimeoutMS: 45000, // Close sockets after 45s of inactivity
+    });
+
+    console.log(`✅ MongoDB Connected: ${conn.connection.host}`);
+    
+    // Handle connection events
+    mongoose.connection.on('error', (err) => {
+      console.error('❌ MongoDB connection error:', err);
+    });
+
+    mongoose.connection.on('disconnected', () => {
+      console.warn('⚠️  MongoDB disconnected. Attempting to reconnect...');
+    });
+
+  } catch (error) {
+    console.error('❌ MongoDB connection failed:', error.message);
+    console.error('\n💡 Make sure:');
+    console.error('   1. MongoDB is running (if using local MongoDB)');
+    console.error('   2. MONGODB_URI is correct in your .env file');
+    console.error('   3. Your network/firewall allows the connection\n');
+    process.exit(1); // Exit if we can't connect
+  }
+};
+
+// Middleware to check MongoDB connection before handling requests
+const checkMongoConnection = (req, res, next) => {
+  if (mongoose.connection.readyState !== 1) {
+    return res.status(503).json({
+      message: "Database connection unavailable",
+      error: "MongoDB is not connected. Please check your database connection.",
+    });
+  }
+  next();
+};
+
+// Connect to database
+connectDB();
+
+// Routes - add connection check middleware
+app.use("/api/projects", checkMongoConnection, require("./routes/projects"));
 
 // Error handling should be last
 app.use(errorHandler);

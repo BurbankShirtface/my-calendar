@@ -14,6 +14,15 @@ const errorHandler = (err, req, res, next) => {
     });
   }
 
+  // Handle MongoDB connection errors
+  if (err.name === "MongooseError" || err.name === "MongoServerError" || err.name === "MongoNetworkError") {
+    return res.status(503).json({
+      message: "Database connection error",
+      error: "Unable to connect to database. Please check your MongoDB connection.",
+      details: process.env.NODE_ENV === "development" ? err.message : undefined,
+    });
+  }
+
   res.status(500).json({
     message: "Internal Server Error",
     error:
