@@ -7,4 +7,12 @@ export default defineConfig({
   build: {
     outDir: "dist",
   },
+  preview: {
+    port: process.env.PORT || 4173,
+    host: true,
+  },
+  server: {
+    port: 5173,
+    host: true,
+  },
 });
