@@ -28,7 +28,7 @@ function Calendar({ projects }) {
     return new Date().getFullYear();
   };
   
-  const [selectedYear, setSelectedYear] = useState(getInitialYear());
+  const [selectedYear, setSelectedYear] = useState(() => new Date().getFullYear());
 
   const getMonthsForYear = (year) => {
     const months = [];
@@ -75,11 +75,15 @@ function Calendar({ projects }) {
     setMonths(getMonthsForYear(selectedYear));
   }, [selectedYear]);
 
-  // Update selected year if current year is not available in projects
+  // Update selected year when projects load - set to most recent year with projects
   useEffect(() => {
     const availableYears = getAvailableYears();
-    if (availableYears.length > 0 && !availableYears.includes(selectedYear)) {
-      setSelectedYear(availableYears[0]); // Set to most recent year with projects
+    if (availableYears.length > 0) {
+      // Always set to the most recent year with projects if it's different
+      const mostRecentYear = availableYears[0];
+      if (selectedYear !== mostRecentYear) {
+        setSelectedYear(mostRecentYear);
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [projects]);
