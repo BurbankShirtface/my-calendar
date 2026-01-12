@@ -9,3 +9,15 @@ services:
         sync: false
       - key: PORT
         value: 5000
+  - type: web
+    name: montgomery-construction-calendar
+    env: node
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    envVars:
+      - key: VITE_API_URL
+        sync: false
+      - key: VITE_ADMIN_PASSWORD
+        sync: false
+      - key: PORT
+        sync: false
