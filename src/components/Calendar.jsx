@@ -112,12 +112,17 @@ function Calendar({ projects }) {
     ));
 
     // Add cells for each day of the month
+    const today = new Date();
     const dayCells = Array.from({ length: daysInMonth }, (_, i) => {
       const day = new Date(
         month.getFullYear(),
         month.getMonth(),
         i + 1
       );
+      const isToday =
+        day.getDate() === today.getDate() &&
+        day.getMonth() === today.getMonth() &&
+        day.getFullYear() === today.getFullYear();
       const dayProjects = projects.filter((project) => {
         const startDate = parseLocalDate(project.startDate);
         startDate.setHours(0, 0, 0, 0);
@@ -133,7 +138,7 @@ function Calendar({ projects }) {
           key={i + 1}
           className={`day ${
             dayProjects.length > 0 ? "has-projects" : ""
-          }`}
+          } ${isToday ? "today" : ""}`}
         >
           <span className="day-number">{i + 1}</span>
           {dayProjects.map((project, index) => (

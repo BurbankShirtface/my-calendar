@@ -24,15 +24,58 @@
   box-sizing: border-box;
 }
 
+.project-list-filters {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.year-filter-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.year-filter-label {
+  color: var(--yellow);
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.year-filter-select {
+  background-color: rgba(255, 255, 255, 0.1);
+  border: 2px solid var(--yellow);
+  border-radius: 8px;
+  color: var(--yellow);
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  min-width: 100px;
+}
+
+.year-filter-select:hover,
+.year-filter-select:focus {
+  background-color: rgba(255, 202, 58, 0.2);
+  outline: none;
+}
+
+.year-filter-select option {
+  background-color: var(--dark);
+  color: var(--yellow);
+}
+
 .search-input {
-  width: 100%;
+  flex: 1;
+  min-width: 200px;
   padding: 0.75rem;
   background-color: rgba(255, 255, 255, 0.1);
   border: 1px solid var(--gray);
   color: var(--yellow);
   border-radius: 4px;
   font-size: 1rem;
-  margin-bottom: 1rem;
   box-sizing: border-box;
 }
 
