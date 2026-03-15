@@ -7,7 +7,7 @@ export default defineConfig({
   plugins: [
     react(),
     VitePWA({
-      registerType: "autoUpdate",
+      registerType: "prompt", // show "Update available" so user can refresh without reinstalling PWA
       includeAssets: ["favicon.ico", "apple-touch-icon.png", "vite.svg"],
       manifest: {
         name: "Montgomery Construction Calendar",

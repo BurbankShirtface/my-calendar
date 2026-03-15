@@ -3,6 +3,7 @@ import "./App.css";
 import Calendar from "./components/Calendar";
 import Header from "./components/Header";
 import ProjectList from "./components/ProjectList";
+import ReloadPrompt from "./components/ReloadPrompt";
 
 const API_URL = (import.meta.env.VITE_API_URL || "http://localhost:5000").replace(/\/$/, ""); // Remove trailing slash if present
 
@@ -396,6 +397,8 @@ function App() {
           onClose={() => setShowProjectList(false)}
         />
       )}
+
+      <ReloadPrompt />
     </div>
   );
 }
