@@ -324,7 +324,7 @@
   height: 100%;
   width: 100%;
   padding: 4px;
-  align-items: flex-start;
+  align-items: stretch;
   justify-content: flex-start;
   overflow: hidden;
   border-radius: 6px;
@@ -332,6 +332,22 @@
   background-color: rgba(255, 255, 255, 0.02);
   transition: all 0.2s ease;
   box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Let the project list area grow and shrink; day-number stays fixed */
+.expanded-days .day .day-number {
+  flex-shrink: 0;
+}
+
+/* In expanded view, job bars share the day cell height so all are visible */
+.expanded-days .day .project-label {
+  flex: 1;
+  min-height: 0; /* allow shrinking so multiple bars fit */
+  margin: 1px 0;
+  display: flex;
+  align-items: center;
 }
 
 
