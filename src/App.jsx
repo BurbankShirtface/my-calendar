@@ -12,6 +12,20 @@ const parseLocalDate = (dateString) => {
   return new Date(year, month - 1, day);
 };
 
+// Format a date string for display (handles YYYY-MM-DD or ISO with T)
+const formatDateDisplay = (dateString) => {
+  if (!dateString) return "—";
+  const raw = dateString.split("T")[0];
+  if (!raw) return "—";
+  const [y, m, d] = raw.split("-").map(Number);
+  if (isNaN(y) || isNaN(m) || isNaN(d)) return "—";
+  return new Date(y, m - 1, d).toLocaleDateString("en-US", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  });
+};
+
 function App() {
   const [projects, setProjects] = useState([]);
   const [showAdminModal, setShowAdminModal] = useState(false);
@@ -40,6 +54,7 @@ function App() {
     return false;
   });
   const [editingProject, setEditingProject] = useState(null);
+  const [selectedProjectDetail, setSelectedProjectDetail] = useState(null);
 
   const handleAdminAccess = () => {
     setShowAdminModal(true);
@@ -119,6 +134,7 @@ function App() {
   };
 
   const handleEditProject = (project) => {
+    setSelectedProjectDetail(null); // close detail popup if open
     setEditingProject(project);
     setShowNewProjectModal(true);
   };
@@ -212,7 +228,10 @@ function App() {
         onLogout={handleLogout}
       />
       <main>
-        <Calendar projects={projects} />
+        <Calendar
+          projects={projects}
+          onProjectClick={setSelectedProjectDetail}
+        />
       </main>
 
       {showAdminModal && !isAuthenticated && (
@@ -238,6 +257,54 @@ function App() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {selectedProjectDetail && (
+        <div className="modal" onClick={() => setSelectedProjectDetail(null)}>
+          <div
+            className="modal-content project-detail-modal"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h2>Project details</h2>
+            <div className="project-detail-fields">
+              <div className="project-detail-row">
+                <span className="project-detail-label">Name</span>
+                <span className="project-detail-value">{selectedProjectDetail.name}</span>
+              </div>
+              <div className="project-detail-row">
+                <span className="project-detail-label">Start date</span>
+                <span className="project-detail-value">
+                  {formatDateDisplay(selectedProjectDetail.startDate)}
+                </span>
+              </div>
+              <div className="project-detail-row">
+                <span className="project-detail-label">End date</span>
+                <span className="project-detail-value">
+                  {formatDateDisplay(selectedProjectDetail.endDate)}
+                </span>
+              </div>
+              <div className="project-detail-row">
+                <span className="project-detail-label">Color</span>
+                <span className="project-detail-value project-detail-color">
+                  <span
+                    className="project-detail-swatch"
+                    style={{ backgroundColor: selectedProjectDetail.color || "#ffca3a" }}
+                    aria-hidden
+                  />
+                  {selectedProjectDetail.color || "#ffca3a"}
+                </span>
+              </div>
+            </div>
+            <div className="button-group">
+              <button type="button" onClick={() => handleEditProject(selectedProjectDetail)}>
+                Edit
+              </button>
+              <button type="button" onClick={() => setSelectedProjectDetail(null)}>
+                Close
+              </button>
+            </div>
           </div>
         </div>
       )}

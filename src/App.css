@@ -96,6 +96,47 @@ button:hover {
   justify-content: flex-end;
 }
 
+/* Project detail popup (from calendar month → project click) */
+.project-detail-modal h2 {
+  margin-bottom: 1rem;
+}
+
+.project-detail-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.project-detail-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.project-detail-label {
+  color: var(--gray);
+  font-size: 0.9rem;
+  min-width: 5rem;
+}
+
+.project-detail-value {
+  color: var(--yellow);
+}
+
+.project-detail-color {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.project-detail-swatch {
+  width: 1.25rem;
+  height: 1.25rem;
+  border-radius: 4px;
+  border: 1px solid var(--gray);
+}
+
 .form-group {
   display: flex;
   flex-direction: column;

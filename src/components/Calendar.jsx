@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import "./Calendar.css";
 
-function Calendar({ projects }) {
+function Calendar({ projects, onProjectClick }) {
   const [months, setMonths] = useState([]);
   const [expandedMonth, setExpandedMonth] = useState(null); // null or month index
   
@@ -144,9 +144,14 @@ function Calendar({ projects }) {
           {dayProjects.map((project, index) => (
             <div
               key={project._id || index}
-              className={isExpanded ? "project-label" : "project-indicator"}
+              className={isExpanded ? "project-label project-label-clickable" : "project-indicator"}
               style={{ backgroundColor: project.color }}
-              title={project.name}
+              title={isExpanded ? `${project.name} – click to view details` : project.name}
+              role={isExpanded ? "button" : undefined}
+              onClick={isExpanded && onProjectClick ? (e) => {
+                e.stopPropagation();
+                onProjectClick(project);
+              } : undefined}
             >
               {isExpanded && <span className="project-name">{project.name}</span>}
             </div>
