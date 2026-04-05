@@ -272,15 +272,71 @@
   gap: 1rem;
   margin-bottom: 1rem;
   flex-shrink: 0;
+  padding: 0 clamp(2.25rem, 8vw, 3rem);
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.expanded-month-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(0.35rem, 2vw, 1rem);
+  width: 100%;
+  max-width: 36rem;
+}
+
+.expanded-month-nav-btn {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: clamp(44px, 11vw, 52px);
+  height: clamp(44px, 11vw, 52px);
+  padding: 0;
+  border: 2px solid var(--yellow);
+  border-radius: 12px;
+  background-color: rgba(255, 255, 255, 0.08);
+  color: var(--yellow);
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  transition: background-color 0.2s ease, border-color 0.2s ease,
+    transform 0.15s ease;
+  box-sizing: border-box;
+}
+
+.expanded-month-nav-btn:hover {
+  background-color: rgba(255, 202, 58, 0.2);
+  border-color: rgba(255, 202, 58, 0.85);
+}
+
+.expanded-month-nav-btn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(255, 202, 58, 0.35);
+  border-color: var(--yellow);
+}
+
+.expanded-month-nav-btn:active {
+  transform: scale(0.96);
+}
+
+.expanded-month-nav-icon {
+  width: clamp(22px, 6vw, 28px);
+  height: clamp(22px, 6vw, 28px);
+  display: block;
 }
 
 .expanded-month-title {
   text-align: center;
   margin: 0;
   color: var(--yellow);
-  font-size: clamp(1.5rem, 3.5vw, 2.2rem);
+  font-size: clamp(1.25rem, 4vw, 2.2rem);
   font-weight: 700;
-  letter-spacing: 1px;
+  letter-spacing: 0.5px;
+  flex: 1;
+  min-width: 0;
+  line-height: 1.2;
 }
 
 .expanded-year-selector-container {
@@ -531,5 +587,45 @@
   .day-header {
     font-size: 0.65rem;
     padding: 0.3rem 0;
+  }
+}
+
+/* Expanded month: small viewports */
+@media (max-width: 768px) {
+  .expanded-month-container {
+    padding: 2.25rem 0.5rem 0.5rem;
+    border-radius: 12px;
+  }
+
+  .expanded-month-header {
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+    padding: 0 clamp(1.75rem, 5vw, 2.5rem);
+  }
+
+  .expanded-month-nav {
+    max-width: none;
+  }
+
+  .close-expanded-month {
+    top: 0.35rem;
+    right: 0.35rem;
+    width: 44px;
+    height: 44px;
+  }
+}
+
+@media (max-width: 480px) {
+  .expanded-month-header {
+    padding: 0 0.25rem;
+  }
+
+  .expanded-month-nav {
+    gap: 0.25rem;
+  }
+
+  .expanded-year-selector-container {
+    flex-wrap: wrap;
+    justify-content: center;
   }
 }

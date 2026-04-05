@@ -1,5 +1,23 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import "./Calendar.css";
+
+const ChevronLeft = () => (
+  <svg className="expanded-month-nav-icon" viewBox="0 0 24 24" aria-hidden="true">
+    <path
+      fill="currentColor"
+      d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"
+    />
+  </svg>
+);
+
+const ChevronRight = () => (
+  <svg className="expanded-month-nav-icon" viewBox="0 0 24 24" aria-hidden="true">
+    <path
+      fill="currentColor"
+      d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"
+    />
+  </svg>
+);
 
 function Calendar({ projects, onProjectClick }) {
   const [months, setMonths] = useState([]);
@@ -65,6 +83,28 @@ function Calendar({ projects, onProjectClick }) {
     return yearArray;
   };
 
+  /** Years shown in dropdowns: project years plus current selection (for arrow navigation across years). */
+  const getYearSelectOptions = () => {
+    const base = getAvailableYears();
+    const set = new Set(base);
+    set.add(selectedYear);
+    return Array.from(set).sort((a, b) => b - a);
+  };
+
+  const navigateExpandedMonth = useCallback((delta) => {
+    setExpandedMonth((currentMonth) => {
+      if (currentMonth === null) return null;
+      const next = currentMonth + delta;
+      if (next >= 0 && next <= 11) return next;
+      if (delta < 0) {
+        setSelectedYear((y) => y - 1);
+        return 11;
+      }
+      setSelectedYear((y) => y + 1);
+      return 0;
+    });
+  }, []);
+
   // Debug: Log projects when they change
   useEffect(() => {
     console.log("Calendar received projects:", projects);
@@ -87,6 +127,21 @@ function Calendar({ projects, onProjectClick }) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [projects]);
+
+  useEffect(() => {
+    if (expandedMonth === null) return;
+    const onKeyDown = (e) => {
+      if (e.key === "ArrowLeft") {
+        e.preventDefault();
+        navigateExpandedMonth(-1);
+      } else if (e.key === "ArrowRight") {
+        e.preventDefault();
+        navigateExpandedMonth(1);
+      }
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [expandedMonth, navigateExpandedMonth]);
 
   // Helper function to render a month calendar
   const renderMonth = (month, monthIndex, isExpanded = false) => {
@@ -178,12 +233,34 @@ function Calendar({ projects, onProjectClick }) {
           </button>
           <div className="expanded-month">
             <div className="expanded-month-header">
-              <h2 className="expanded-month-title">
-                {month.toLocaleDateString("en-US", {
-                  month: "long",
-                  year: "numeric",
-                })}
-              </h2>
+              <div
+                className="expanded-month-nav"
+                role="group"
+                aria-label="Month navigation"
+              >
+                <button
+                  type="button"
+                  className="expanded-month-nav-btn"
+                  onClick={() => navigateExpandedMonth(-1)}
+                  aria-label="Previous month"
+                >
+                  <ChevronLeft />
+                </button>
+                <h2 className="expanded-month-title">
+                  {month.toLocaleDateString("en-US", {
+                    month: "long",
+                    year: "numeric",
+                  })}
+                </h2>
+                <button
+                  type="button"
+                  className="expanded-month-nav-btn"
+                  onClick={() => navigateExpandedMonth(1)}
+                  aria-label="Next month"
+                >
+                  <ChevronRight />
+                </button>
+              </div>
               <div className="expanded-year-selector-container">
                 <label htmlFor="expanded-year-select" className="year-selector-label">
                   Year:
@@ -194,7 +271,7 @@ function Calendar({ projects, onProjectClick }) {
                   value={selectedYear}
                   onChange={(e) => setSelectedYear(parseInt(e.target.value))}
                 >
-                  {getAvailableYears().map(year => (
+                  {getYearSelectOptions().map((year) => (
                     <option key={year} value={year}>
                       {year}
                     </option>
@@ -231,7 +308,7 @@ function Calendar({ projects, onProjectClick }) {
           value={selectedYear}
           onChange={(e) => setSelectedYear(parseInt(e.target.value))}
         >
-          {getAvailableYears().map(year => (
+          {getYearSelectOptions().map((year) => (
             <option key={year} value={year}>
               {year}
             </option>
