@@ -600,7 +600,9 @@
   .expanded-month-header {
     gap: 0.75rem;
     margin-bottom: 0.75rem;
-    padding: 0 clamp(1.75rem, 5vw, 2.5rem);
+    /* Leave room for absolute close (44px) + offset + gap so next-month btn never meets × */
+    padding-left: clamp(0.5rem, 2.5vw, 1rem);
+    padding-right: calc(44px + 1.25rem);
   }
 
   .expanded-month-nav {
@@ -609,7 +611,7 @@
 
   .close-expanded-month {
     top: 0.35rem;
-    right: 0.35rem;
+    right: 0.5rem;
     width: 44px;
     height: 44px;
   }
@@ -617,11 +619,12 @@
 
 @media (max-width: 480px) {
   .expanded-month-header {
-    padding: 0 0.25rem;
+    padding-left: 0.35rem;
+    padding-right: calc(44px + 1.35rem);
   }
 
   .expanded-month-nav {
-    gap: 0.25rem;
+    gap: 0.35rem;
   }
 
   .expanded-year-selector-container {
